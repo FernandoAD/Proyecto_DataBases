@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class AnalisisGUI extends JFrame implements ActionListener{
   private JTextField tfDiagnostico, tfDescripcion, tfTipo, tfClavePaciente, tfClaveDoctor;
-  private JButton bCapturar, bConsultar, bConsultarTipo, bConsultarPaciente, bCancelarTransaccion, bActualizarDatos, bSalir;
+  private JButton bCapturar, bConsultar, bConsultarTipo, bConsultarPorClavePac, bCancelarTransaccion, bActualizarDatos, bSalir;
   private JTextArea taDatos;
   private JPanel panel1, panel2;
 
@@ -23,7 +23,7 @@ public class AnalisisGUI extends JFrame implements ActionListener{
     bCapturar= new JButton("Capturar");
     bConsultar= new JButton("Consultar");
     bConsultarTipo= new JButton("Consultar Tipo");
-    bConsultarPaciente= new JButton("Consultar por Clave");
+    bConsultarPorClavePac= new JButton("Consultar por Clave");
     bCancelarTransaccion= new JButton ("Cancelar Transaccion");
     bActualizarDatos= new JButton ("Actualizar Datos");
     bSalir= new JButton("Salir");
@@ -34,7 +34,7 @@ public class AnalisisGUI extends JFrame implements ActionListener{
     bCapturar.addActionListener(this);
     bConsultar.addActionListener(this);
     bConsultarTipo.addActionListener(this);
-    bConsultarPaciente.addActionListener(this);
+    bConsultarPorClavePac.addActionListener(this);
     bCancelarTransaccion.addActionListener(this);
     bActualizarDatos.addActionListener(this);
     bSalir.addActionListener(this);
@@ -59,7 +59,7 @@ public class AnalisisGUI extends JFrame implements ActionListener{
     panel1.add(bCapturar);
     panel1.add(bConsultar);
     panel1.add(bConsultarTipo);
-    panel1.add(bConsultarPaciente);
+    panel1.add(bConsultarPorClavePac);
     panel1.add(bCancelarTransaccion);
     panel1.add(bActualizarDatos);
     panel1.add(bSalir);
@@ -83,7 +83,7 @@ public class AnalisisGUI extends JFrame implements ActionListener{
     String tipo= tfTipo.getText();
     String descripcion= tfDescripcion.getText();
 
-    if(clavePaciente.equals("") || claveDoctor.isEmpty() || diagnostico.isEmpty() || tipo.isEmpty() || diagnostico.isEmpty()){
+    if(clavePaciente.equals("") || claveDoctor.isEmpty() || diagnostico.isEmpty() || tipo.isEmpty() || descripcion.isEmpty()){
       datos="VACIO";
     }
     else{
@@ -102,7 +102,7 @@ public class AnalisisGUI extends JFrame implements ActionListener{
 
     bCapturar.setEnabled(false);
     bConsultar.setEnabled(false);
-    bConsultarPaciente.setEnabled(false);
+    bConsultarPorClavePac.setEnabled(false);
     bConsultarTipo.setEnabled(false);
   }
 
@@ -112,7 +112,7 @@ public class AnalisisGUI extends JFrame implements ActionListener{
 
     bCapturar.setEnabled(true);
     bConsultar.setEnabled(true);
-    bConsultarPaciente.setEnabled(true);
+    bConsultarPorClavePac.setEnabled(true);
     bConsultarTipo.setEnabled(true);
   }
 
@@ -150,15 +150,26 @@ public class AnalisisGUI extends JFrame implements ActionListener{
       taDatos.setText(datos);
     }
 
-    if(e.getSource()==bConsultarPaciente){
+    if(e.getSource()==bConsultarTipo){
+      String tipo= tfTipo.getText();
+      datos=hospitalad.consultarPorTipo(tipo);
+      if(datos.equals("NOT_FOUND")){
+        taDatos.setText("No se localizaro el tipo: " + " " +tipo);
+      }
+      else{
+          taDatos.setText(datos);
+      }
+    }
+
+    if(e.getSource()==bConsultarPorClavePac){
       String clavePaciente= tfClavePaciente.getText();
-      datos=hospitalad.consultarAnalisisPaciente(clavePaciente);
+      datos=hospitalad.consultarPorClaveDePaciente(clavePaciente);
       if(datos.equals("NOT_FOUND")){
         taDatos.setText("No se localizaron analisis del paciente con clave" +clavePaciente);
       }
       else{
           taDatos.setText(datos);
-          //desplegar(datos);
+          desplegar(datos);
           inactivarBotones();
       }
     }

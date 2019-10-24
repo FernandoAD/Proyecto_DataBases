@@ -26,7 +26,7 @@ public class DoctorGUI extends JFrame implements ActionListener{
     bCancelarTransaccion= new JButton("Cancelar Transaccion");
     bActualizarDatos= new JButton ("Actualizar Datos");
     bSalir= new JButton("Salir");
-    taDatos= new JTextArea(10,20);
+    taDatos= new JTextArea(10,40);
     panel1= new JPanel();
     panel2= new JPanel();
 
@@ -161,6 +161,17 @@ public class DoctorGUI extends JFrame implements ActionListener{
           taDatos.setText(datos);
           desplegar(datos);
           inactivarBotones();
+      }
+    }
+
+    if(e.getSource()==bConsultarEspecialidad){
+      String especialidadDoctor= tfEspecialidad.getText();
+      datos=hospitalad.consultarEspecialidad(especialidadDoctor);
+      if(datos.equals("NOT_FOUND")){
+        taDatos.setText("No se localizo la especialidad del doctor: " + especialidadDoctor);
+      }
+      else{
+          taDatos.setText(datos);
       }
     }
 

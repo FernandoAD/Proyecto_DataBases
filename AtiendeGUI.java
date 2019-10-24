@@ -2,26 +2,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.StringTokenizer;
+import java.util.Date;
 
-public class PacienteGUI extends JFrame implements ActionListener{
-  private JTextField tfNombre, tfTelefono, tfClavePaciente, tfDireccion;
-  private JButton bCapturar, bConsultar, bConsultarClave, bCancelarTransaccion, bActualizarDatos, bSalir;
+public class AtiendeGUI extends JFrame implements ActionListener{
+  private JTextField tfDiagnostico, tfTratamiento, tfClavePaciente, tfClaveDoctor;
+  private JButton bCapturar, bConsultar, bConsultarDoctor, bCancelarTransaccion, bActualizarDatos, bSalir;
   private JTextArea taDatos;
   private JPanel panel1, panel2;
 
   private HospitalAD hospitalad= new HospitalAD();
 
-  public PacienteGUI(){
-    super("Gestion de Pacientes");
+  public AtiendeGUI(){
+    super("Gestion de Atiende");
 
-    tfNombre= new JTextField();
-    tfTelefono= new JTextField();
+    tfDiagnostico= new JTextField();
+    tfTratamiento= new JTextField();
     tfClavePaciente= new JTextField();
-    tfDireccion= new JTextField();
+    tfClaveDoctor= new JTextField();
     bCapturar= new JButton("Capturar");
     bConsultar= new JButton("Consultar");
-    bConsultarClave= new JButton("Consultar Clave");
-    bCancelarTransaccion= new JButton("Cancelar transaccion");
+    bConsultarDoctor= new JButton("Consultar por Clave");
+    bCancelarTransaccion= new JButton ("Cancelar Transaccion");
     bActualizarDatos= new JButton ("Actualizar Datos");
     bSalir= new JButton("Salir");
     taDatos= new JTextArea(10,40);
@@ -30,7 +31,7 @@ public class PacienteGUI extends JFrame implements ActionListener{
 
     bCapturar.addActionListener(this);
     bConsultar.addActionListener(this);
-    bConsultarClave.addActionListener(this);
+    bConsultarDoctor.addActionListener(this);
     bCancelarTransaccion.addActionListener(this);
     bActualizarDatos.addActionListener(this);
     bSalir.addActionListener(this);
@@ -38,20 +39,21 @@ public class PacienteGUI extends JFrame implements ActionListener{
     bCancelarTransaccion.setEnabled(false);
     bActualizarDatos.setEnabled(false);
 
+
     panel1.setLayout(new GridLayout(10,2));
     panel2.setLayout(new FlowLayout());
 
-    panel1.add(new JLabel ("Clave: "));
+    panel1.add(new JLabel ("Clave Doctor: "));
+    panel1.add(tfClaveDoctor);
+    panel1.add(new JLabel ("Clave Paciente: "));
     panel1.add(tfClavePaciente);
-    panel1.add(new JLabel ("Nombre: "));
-    panel1.add(tfNombre);
-    panel1.add(new JLabel ("Telefono: "));
-    panel1.add(tfTelefono);
-    panel1.add(new JLabel ("Direccion: "));
-    panel1.add(tfDireccion);
+    panel1.add(new JLabel ("Diagnostico: "));
+    panel1.add(tfDiagnostico);
+    panel1.add(new JLabel ("Tratamiento: "));
+    panel1.add(tfTratamiento);
     panel1.add(bCapturar);
     panel1.add(bConsultar);
-    panel1.add(bConsultarClave);
+    panel1.add(bConsultarDoctor);
     panel1.add(bCancelarTransaccion);
     panel1.add(bActualizarDatos);
     panel1.add(bSalir);
@@ -66,24 +68,22 @@ public class PacienteGUI extends JFrame implements ActionListener{
 
   public String obtenerDatos(){
     String datos;
-    String fecha="", hora="";
+    Date fecha;
+    String fechaOrden="", fechaAplicacion="";
 
+    String claveDoctor= tfClaveDoctor.getText();
     String clavePaciente= tfClavePaciente.getText();
-    String nombrePaciente= tfNombre.getText();
-    String telefonoPaciente= tfTelefono.getText();
-    String direccionPaciente= tfDireccion.getText();
+    String diagnostico= tfDiagnostico.getText();
+    String tratamiento= tfTratamiento.getText();
 
-    if(clavePaciente.equals("") || nombrePaciente.isEmpty() || direccionPaciente.isEmpty() || telefonoPaciente.isEmpty()){
+    if(clavePaciente.equals("") || claveDoctor.isEmpty() || diagnostico.isEmpty() || tratamiento.isEmpty()){
       datos="VACIO";
     }
     else{
-      try{
-        int n= Integer.parseInt(telefonoPaciente);
-        datos=clavePaciente+"_"+nombrePaciente+"_"+direccionPaciente+"_"+telefonoPaciente;
-      }
-      catch(NumberFormatException nfe){
-          datos = "NO_NUMERICO";
-      }
+      fecha= new Date();
+      fechaOrden=fechaOrden.format("%tF", fecha);
+
+      datos=claveDoctor+"_"+clavePaciente+"_"+fechaOrden+"_"+diagnostico+"_"+tratamiento;
     }
     return datos;
   }
@@ -94,7 +94,7 @@ public class PacienteGUI extends JFrame implements ActionListener{
 
     bCapturar.setEnabled(false);
     bConsultar.setEnabled(false);
-    bConsultarClave.setEnabled(false);
+    bConsultarDoctor.setEnabled(false);
   }
 
   private void activarBotones(){
@@ -103,16 +103,16 @@ public class PacienteGUI extends JFrame implements ActionListener{
 
     bCapturar.setEnabled(true);
     bConsultar.setEnabled(true);
-    bConsultarClave.setEnabled(true);
-
+    bConsultarDoctor.setEnabled(true);
   }
 
   private void desplegar(String datos){
     StringTokenizer st= new StringTokenizer(datos,"*");
     tfClavePaciente.setText(st.nextToken());
-    tfNombre.setText(st.nextToken());
-    tfDireccion.setText(st.nextToken());
-    tfTelefono.setText(st.nextToken());
+    tfClaveDoctor.setText(st.nextToken());
+    String nulo= st.nextToken();
+    tfDiagnostico.setText(st.nextToken());
+    tfTratamiento.setText(st.nextToken());
   }
 
   public JPanel getPanel2(){
@@ -120,6 +120,7 @@ public class PacienteGUI extends JFrame implements ActionListener{
   }
 
   public void actionPerformed(ActionEvent e){
+
     String datos, respuesta;
 
     if(e.getSource()==bCapturar){
@@ -129,26 +130,21 @@ public class PacienteGUI extends JFrame implements ActionListener{
         respuesta="Algun campo esta vacio";
       }
       else{
-        if(datos.equals("NO_NUMERICO")){
-          respuesta="Telefono debe ser numerico";
-        }
-        else{
-          respuesta=hospitalad.capturarPaciente(datos);
-        }
+          respuesta=hospitalad.capturarAtiende(datos);
       }
       taDatos.setText(respuesta);
     }
 
     if(e.getSource()==bConsultar){
-      datos=hospitalad.consultarPacientes();
+      datos=hospitalad.consultarAtiende();
       taDatos.setText(datos);
     }
 
-    if(e.getSource()==bConsultarClave){
-      String clavePaciente= tfClavePaciente.getText();
-      datos=hospitalad.consultarPacienteClave(clavePaciente);
+    if(e.getSource()==bConsultarDoctor){
+      String claveDoctor= tfClaveDoctor.getText();
+      datos=hospitalad.consultarPorClaveDoctor(claveDoctor);
       if(datos.equals("NOT_FOUND")){
-        taDatos.setText("No se localizo el paciente con clave" +clavePaciente);
+        taDatos.setText("No se localizaron pacientes del doctor con clave" +claveDoctor);
       }
       else{
           taDatos.setText(datos);
@@ -162,17 +158,18 @@ public class PacienteGUI extends JFrame implements ActionListener{
     }
 
     if(e.getSource()==bActualizarDatos){
-      datos=hospitalad.actualizarDatosPaciente();
+      datos=hospitalad.actualizarDatosAtiende();
       taDatos.setText(datos);
     }
 
     if(e.getSource() == bSalir){
         panel2.setVisible(false);
     }
+
   }
 
   public static void main(String args[]){
-    PacienteGUI paciente= new PacienteGUI();
-    paciente.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    AtiendeGUI atiende= new AtiendeGUI();
+    atiende.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 }

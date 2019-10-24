@@ -20,6 +20,7 @@ public class HospitalAD{
   private PacienteDP pacientedp;
   private DoctorDP doctordp;
   private AnalisisDP analisisdp;
+  private AtiendeDP atiendedp;
 
   public HospitalAD(){
     try{
@@ -204,6 +205,39 @@ public class HospitalAD{
     return datos;
   }
 
+  public String consultarEspecialidad(String especialidad){
+    String datos="";
+    boolean encontrado=false;
+    String strQuery;
+    ResultSet tr;
+
+    strQuery="SELECT * FROM Doctor WHERE especialidad='"+especialidad+"'";
+    doctordp= new DoctorDP();
+
+    try{
+      statement=conexion.createStatement();
+      tr= statement.executeQuery(strQuery);
+      while(tr.next()){
+        doctordp.setClaveDoctor(tr.getString(1));
+        doctordp.setNombreDoctor(tr.getString(2));
+        doctordp.setEspecialidad(tr.getString(3));
+        doctordp.setTelefonoDoctor(tr.getInt(4));
+        doctordp.setDireccion(tr.getString(5));
+        datos= datos + doctordp.toString()+"\n";
+        encontrado=true;
+      }
+      statement.close();
+
+      if(!encontrado){
+        datos="NOT_FOUND";
+      }
+    }
+    catch(SQLException sqle){
+      datos="Error:"+sqle;
+    }
+    return datos;
+  }
+
   public String actualizarDatosDoctor(){
 
     return "hola";
@@ -258,7 +292,7 @@ public class HospitalAD{
     return datos;
   }
 
-  public String consultarAnalisisPaciente(String clavePaciente){
+  public String consultarPorClaveDePaciente(String clavePaciente){
     String datos="";
     boolean encontrado=false;
     String strQuery;
@@ -270,7 +304,7 @@ public class HospitalAD{
     try{
       statement=conexion.createStatement();
       tr= statement.executeQuery(strQuery);
-      while(tr.next() || encontrado==false){
+      while(tr.next()){
         analisisdp.setClavePaciente(tr.getString(1));
         analisisdp.setClaveDoctor(tr.getString(2));
         analisisdp.setDiagnostico(tr.getString(3));
@@ -279,6 +313,7 @@ public class HospitalAD{
         analisisdp.setFechaOrden(tr.getString(6));
         analisisdp.setFechaAplicacion(tr.getString(7));
         datos= datos+analisisdp.toString()+ "\n";
+        encontrado=true;
       }
       statement.close();
 
@@ -292,9 +327,128 @@ public class HospitalAD{
     return datos;
   }
 
+  public String consultarPorTipo(String tipo){
+    String datos="";
+    boolean encontrado=false;
+    String strQuery;
+    ResultSet tr;
+
+    strQuery="SELECT * FROM Analisis WHERE tipo='"+tipo+"'";
+    analisisdp= new AnalisisDP();
+
+    try{
+      statement=conexion.createStatement();
+      tr= statement.executeQuery(strQuery);
+      while(tr.next()){
+        analisisdp.setClavePaciente(tr.getString(1));
+        analisisdp.setClaveDoctor(tr.getString(2));
+        analisisdp.setDiagnostico(tr.getString(3));
+        analisisdp.setTipo(tr.getString(4));
+        analisisdp.setDescripcion(tr.getString(5));
+        analisisdp.setFechaOrden(tr.getString(6));
+        analisisdp.setFechaAplicacion(tr.getString(7));
+        datos= datos + analisisdp.toString()+ "\n";
+        encontrado= true;
+      }
+      statement.close();
+
+      if(!encontrado){
+        datos="NOT_FOUND";
+      }
+    }
+    catch(SQLException sqle){
+      datos="Error:"+sqle;
+    }
+    return datos;
+  }
+
   public String actualizarDatosAnalisis(){
 
     return "hola";
+  }
+
+  //Funciones para AtiendeGUI
+  public String capturarAtiende(String datos){
+    String resultado="";
+    String strInsert="";
+    atiendedp= new AtiendeDP(datos);
+
+    strInsert="INSERT INTO Atiende VALUES("+atiendedp.toStringSql()+")";
+    try{
+      statement= conexion.createStatement();
+      statement.executeUpdate(strInsert);
+      statement.close();
+      resultado="Datos capturados: "+datos;
+      System.out.println(strInsert);
+    }
+    catch(SQLException ioe){
+      resultado="Error: "+ioe;
+    }
+    return resultado;
+  }
+
+  public String consultarAtiende(){
+    String datos="";
+    String strQuery;
+    ResultSet tr;
+
+    strQuery="SELECT * FROM Atiende";
+    atiendedp= new AtiendeDP();
+
+    try{
+      statement=conexion.createStatement();
+      tr= statement.executeQuery(strQuery);
+      while(tr.next()){
+        atiendedp.setClaveDoctor(tr.getString(1));
+        atiendedp.setClavePaciente(tr.getString(2));
+        atiendedp.setFecha(tr.getString(3));
+        atiendedp.setDiagnostico(tr.getString(4));
+        atiendedp.setTratamiento(tr.getString(5));
+        datos= datos+atiendedp.toString()+ "\n";
+      }
+      statement.close();
+    }
+    catch(SQLException fnfe){
+			datos="NOT_FOUND"+fnfe;
+		}
+    return datos;
+  }
+
+  public String consultarPorClaveDoctor(String claveDoctor){
+    String datos="";
+    boolean encontrado=false;
+    String strQuery;
+    ResultSet tr;
+
+    strQuery="SELECT * FROM Atiende WHERE clave_doc='"+claveDoctor+"'";
+    atiendedp= new AtiendeDP();
+
+    try{
+      statement=conexion.createStatement();
+      tr= statement.executeQuery(strQuery);
+      while(tr.next()){
+        atiendedp.setClaveDoctor(tr.getString(1));
+        atiendedp.setClavePaciente(tr.getString(2));
+        atiendedp.setFecha(tr.getString(3));
+        atiendedp.setDiagnostico(tr.getString(4));
+        atiendedp.setTratamiento(tr.getString(5));
+        datos= datos+atiendedp.toString()+ "\n";
+        encontrado=true;
+      }
+      statement.close();
+
+      if(!encontrado){
+        datos="NOT_FOUND";
+      }
+    }
+    catch(SQLException sqle){
+			datos="Error:"+sqle;
+		}
+    return datos;
+  }
+
+  public  String actualizarDatosAtiende(){
+    return "";
   }
 
 }
