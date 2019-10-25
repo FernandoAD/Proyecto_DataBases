@@ -17,7 +17,9 @@ public class HospitalGUI extends JFrame implements ActionListener{
   private DoctorGUI doctor= new DoctorGUI();
   private AnalisisGUI analisis= new AnalisisGUI();
   private AtiendeGUI atiende= new AtiendeGUI();
-
+  private RelacionPacienteGUI relacionpacientes= new RelacionPacienteGUI();
+  private RelacionDoctorGUI relaciondoctor= new RelacionDoctorGUI();
+  private RelacionAnalisisGUI relacionanalisis= new RelacionAnalisisGUI();
 
   private JPanel panel;
 
@@ -29,9 +31,9 @@ public class HospitalGUI extends JFrame implements ActionListener{
     miDoctor =      new JMenuItem("Doctores");
     miAnalisis =    new JMenuItem("Analisis");
     miAtiende =     new JMenuItem("Atiende");
-    miPacDoc=       new JMenuItem("Pacientes>Doctor");
-    miDocPac=       new JMenuItem("Doctores>Paciente");
-    miAnalisisPaciente= new JMenuItem("Analsis>Paciente");
+    miPacDoc=       new JMenuItem("Pacientes de Doctor");
+    miDocPac=       new JMenuItem("Doctores de Paciente");
+    miAnalisisPaciente= new JMenuItem("Analisis de Paciente");
     miSalir =       new JMenuItem("Salir");
 
     miPaciente.addActionListener(this);
@@ -97,6 +99,29 @@ public class HospitalGUI extends JFrame implements ActionListener{
         setVisible(true);
     }
 
+    if(event.getSource()==miDocPac){
+      panel.setVisible(false);
+      panel=relacionpacientes.getPanel2();
+      panel.setVisible(true);
+      add(panel);
+      setVisible(true);
+    }
+
+    if(event.getSource()==miPacDoc){
+      panel.setVisible(false);
+      panel=relaciondoctor.getPanel2();
+      panel.setVisible(true);
+      add(panel);
+      setVisible(true);
+    }
+
+    if(event.getSource()==miAnalisisPaciente){
+      panel.setVisible(false);
+      panel=relacionanalisis.getPanel2();
+      panel.setVisible(true);
+      add(panel);
+      setVisible(true);
+    }
 
     if(event.getSource()== miSalir){
 			System.exit(0);
